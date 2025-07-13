@@ -36,16 +36,20 @@ Scenario: US001_TC01_JPH_GetRequest
   #               "id":70                                     "id":70
   #              }                                          }
   #
-  #      donen Response'un,
-  #
-  #
-  #      ve Response Body'sindeki,
-  #      "title" in "API" oldugunu
-  #      "UserId" degerinin 100 den kucuk oldugunu
-  #      "body" nin "API" kelimesi icerdigini test edin
-  #
-  #
-  #
-  #     */
 
-  #
+  Scenario: JPH adresine bir POST request yaparak response ve request body karşılaştırılması
+
+    Given kullanici "JPHUrl" adresine gider
+    Then  kullanici pathparametresi olarak "posts/70" girer
+    #metod post oldugu icin body olusturuyoruz
+    Then kullanici POST request yapabilmek icin "Ahmet","Merhaba",10 70 degerleri ile reqbody olusturur
+    Then kullanici hazirlanan reqbody ile bir POST request yapar ve response objesine kaydeder
+    Then kullanici response statusCode degerinin 200 oldugunu dogrular
+    Then kullanici response content type degerinin "application/json; charset=utf-8" oldugunu dogrular
+    Then kullanici "Conncetion" header degerinin "keep-alive" oldugunu dogrular
+    Then kullanici response degerini jsonPath olarak kaydeder
+    Then kullanici userid degerinin 10 ldugunu dogrular
+    Then kullanici id degerinin 70 oldugunu dogrular
+    Then kullanici "title" degerinin "Ahmet" oldugunu dogrular
+    Then kullanici "body" degerinin "Merhaba" oldugunu dogrular
+

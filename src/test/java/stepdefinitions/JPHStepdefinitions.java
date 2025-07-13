@@ -2,8 +2,10 @@ package stepdefinitions;
 
 import io.cucumber.java.en.*;
 import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
+import org.json.JSONObject;
 import org.junit.jupiter.api.Assertions;
 import utilities.ConfigReader;
 
@@ -13,7 +15,7 @@ public class JPHStepdefinitions {
     String url="";
     Response response;
     JsonPath resJP;
-
+    JSONObject reqbody=new JSONObject();
     @Given("kullanici {string} adresine gider")
     public void kullanici_adresine_gider(String ConfigBaseurl) {
         url+= ConfigReader.getProperty(ConfigBaseurl);
@@ -54,6 +56,59 @@ public class JPHStepdefinitions {
 
         assertEquals(expValue,resJP.getString(expKey));
 
+
     }
+
+    @Then("kullanici POST request yapabilmek icin {string},{string},{int} {int} degerleri ile reqbody olusturur")
+    public void kullanici_post_request_yapabilmek_icin_degerleri_ile_reqbody_olusturur(String title,String body ,int userId, int id) {
+
+       reqbody.put("title",title);
+       reqbody.put("body",body);
+       reqbody.put("userId",userId);
+       reqbody.put("id",id);
+
+    }
+    @Then("kullanici hazirlanan reqbody ile bir POST request yapar ve response objesine kaydeder")
+    public void kullanici_hazirlanan_reqbody_ile_bir_post_request_yapar_ve_response_objesine_kaydeder() {
+     response=RestAssured.given().contentType(ContentType.JSON).when().body(reqbody.toString()).post(url);
+
+
+
+    }
+    @Then("kullanici {string} header degerinin {string} oldugunu dogrular")
+    public void kullanici_header_degerinin_oldugunu_dogrular(String expHeaderKey, String expHeaderValue) {
+
+        assertEquals(expHeaderValue,response.getHeader(expHeaderKey));
+
+    }
+    @Then("kullanici userid degerinin {int} ldugunu dogrular")
+    public void kullanici_userid_degerinin_ldugunu_dogrular(int userId) {
+
+        assertEquals(userId,resJP.getInt("userId"));
+
+    }
+    @Then("kullanici id degerinin {int} oldugunu dogrular")
+    public void kullanici_id_degerinin_oldugunu_dogrular(int id) {
+
+        assertEquals(id,resJP.getInt("id"));
+
+    }
+    @Then("kullanici {string} degerinin {string} oldugunu dogrular")
+    public void kullanici_degerinin_oldugunu_dogrular(String bodyKey, String bodyValue) {
+
+        assertEquals(bodyValue,resJP.getString(bodyKey));
+
+
+    }
+
+
+
+
+
+
+
+
+
+
 
 }
